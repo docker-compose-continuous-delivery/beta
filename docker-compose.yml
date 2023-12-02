@@ -34,6 +34,7 @@ services:
     environment:
       - DB_HOST=seafile-mariadb
       - SEAFILE_SERVER_HOSTNAME=seafile.${BASE_DOMAIN}
+      - DEBUG=true
     env_file:
       - .seafile.env
     depends_on:
