@@ -33,6 +33,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       - DB_HOST=seafile-mariadb
+      - SEAFILE_SERVER_HOSTNAME=seafile.${BASE_DOMAIN}
     env_file:
       - .seafile.env
     depends_on:
