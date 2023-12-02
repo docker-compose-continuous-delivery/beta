@@ -1,3 +1,8 @@
+## Beta Services Testing Environment
+
+Base Domain Name : `your_service.n1.oze.li`
+Like this: `your_service.${BASE_DOMAIN}`
+
 ## First time deployment
 
 If your server does not have a gpg key, you have to generate one. You can do so by running the following command:
