@@ -2,54 +2,28 @@ version: "3.9"
 
 services:
 
-  seafile-mariadb:
-    image: mariadb:10.11
-    container_name: seafile-mysql
-    environment:
-      - MYSQL_LOG_CONSOLE=true
-    env_file:
-      - .seafile.env
-    volumes:
-      - ./seafile/mariadb:/var/lib/mysql
-    networks:
-      - traefik
-    labels:
-      - "traefik.enable=false"
-
-  seafile-memcached:
-    image: memcached:1.6.18
-    container_name: seafile-memcached
-    entrypoint: memcached -m 256
-    networks:
-      - traefik
-    labels:
-      - "traefik.enable=false"
-
-  seafile:
-    image: seafileltd/seafile-mc:latest
-    container_name: seafile
-    volumes:
-      - ./seafile/seafile:/shared   # Requested, specifies the path to Seafile data persistent store.
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      - DB_HOST=seafile-mariadb
-      - DEBUG=True
-    env_file:
-      - .seafile.env
-    depends_on:
-      - seafile-mariadb
-      - seafile-memcached
-    networks:
-      - traefik
-    labels:
+    siyuan:
+      image: b3log/siyuan
+      container_name: siyuan
+      restart: unless-stopped
+      command: [ '--workspace=/siyuan/workspace/', '--accessAuthCode=${AuthCode}' ]
+      user: '1000:1000'
+      volumes:
+        - ./siyuan:/siyuan/workspace
+        - /etc/localtime:/etc/localtime:ro
+      environment:
+        - TZ=Asia/Shanghai
+        - AuthCode=123456
+      networks:
+        - traefik
+      labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.seafile.rule=Host(`seafile.${BASE_DOMAIN}`)"
-        - "traefik.http.routers.seafile.entrypoints=websecure"
-        - "traefik.http.routers.seafile.tls=true"
-        - "traefik.http.routers.seafile.tls.certresolver=cloudflare"
-        - "traefik.http.routers.seafile.service=seafile"
-        - "traefik.http.services.seafile.loadbalancer.server.port=8000"
-
+        - "traefik.http.routers.siyuan.rule=Host(`siyuan.${BASE_DOMAIN}`)"
+        - "traefik.http.routers.siyuan.entrypoints=websecure"
+        - "traefik.http.routers.siyuan.tls.certresolver=cloudflare"
+        - "traefik.http.routers.siyuan.tls=true"
+        - "traefik.http.routers.siyuan.service=siyuan"
+        - "traefik.http.services.siyuan.loadbalancer.server.port=6806"
 
 networks:
   traefik:
